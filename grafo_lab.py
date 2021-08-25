@@ -187,8 +187,8 @@ t = 10 # tamanho do labirinto
 
 lab = Labirinto(t)
 cam = Caminho(lab)
-print(lab.inicio)
-print(lab.fim)
+print('local do inicio:', lab.inicio)
+print('local do fim:', lab.fim)
 
 cam.construir_caminho()
 
