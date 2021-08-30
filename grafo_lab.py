@@ -13,11 +13,12 @@ class Vertice:
 
 class Labirinto:
 
-    def __init__(self, tam):
-        self.tam = tam
+    def __init__(self, i, j):
+        self.i = i
+        self.j = j
         self.matriz = []
         self.inicio = [0, 0]
-        self.fim = [self.tam - 1, self.tam - 1]
+        self.fim = [self.i - 1, self.j - 1]
 
         self.construir_lab()
         self.inicio_fim()
@@ -26,9 +27,9 @@ class Labirinto:
 
     def construir_lab(self):
 
-        for i in range(self.tam):
+        for i in range(self.i):
             linha = []
-            for j in range(self.tam):
+            for j in range(self.j):
                 id = str(i) + ' ' + str(j)
                 vert = Vertice(id, [])
                 linha.append(vert)
@@ -44,19 +45,19 @@ class Labirinto:
         final = self.matriz[self.fim[0]][self.fim[1]]
 
         print(' ', end='')
-        for j in range(self.tam):
+        for j in range(self.j):
             if self.matriz[0][j] == inicial:
                 print('  ', end='')
             else:
                 print('_ ', end='')
 
-        for i in range(self.tam):
+        for i in range(self.i):
             print()
-            for j in range(self.tam):
+            for j in range(self.j):
                 if j == 0:
                     print('|', end='')
 
-                if i < self.tam - 1:
+                if i < self.i - 1:
                     if self.matriz[i + 1][j] in self.matriz[i][j].list_adj:
                         print(' ', end='')
                     else:
@@ -67,7 +68,7 @@ class Labirinto:
                     else:
                         print('_', end='')
 
-                if j < self.tam - 1:
+                if j < self.j - 1:
                     if self.matriz[i][j + 1] in self.matriz[i][j].list_adj:
                         print(' ', end='')
                     else:
@@ -79,9 +80,9 @@ class Labirinto:
 
     def imprimir_lab(self):
 
-        for i in range(self.tam):
+        for i in range(self.i):
             print()
-            for j in range(self.tam):
+            for j in range(self.j):
 
                 aux = []
                 for n in self.matriz[i][j].list_adj:
@@ -91,8 +92,8 @@ class Labirinto:
 
 
     def inicio_fim(self):
-        self.inicio = [0, random.randint(0, self.tam - 1)]
-        self.fim = [self.tam - 1, random.randint(0, self.tam - 1)]
+        self.inicio = [0, random.randint(0, self.j - 1)]
+        self.fim = [self.i - 1, random.randint(0, self.j - 1)]
 
 
 
@@ -110,12 +111,12 @@ class Caminho:
         self.cont = 0
 
         self.beira = [self.lab.inicio]
-        tam = self.lab.tam
+        tam = self.lab.i * self.lab.j
 
         local_atual = random.choice(self.beira)
-        self.vizitados.append(local_atual)
+        
 
-        while len(self.vizitados) < tam ** 2:
+        while len(self.vizitados) < (tam) - 1:
 
             self.beira.remove(local_atual)
 
@@ -125,13 +126,13 @@ class Caminho:
             if i > 0:
                 self.add_beira(i - 1, j)
 
-            if i < tam - 1:
+            if i < self.lab.i - 1:
                 self.add_beira(i + 1, j)
 
             if j > 0:
                 self.add_beira(i, j - 1)
 
-            if j < tam - 1:
+            if j < self.lab.j - 1:
                 self.add_beira(i, j + 1)
 
             local_prox = random.choice(self.beira)
@@ -148,7 +149,7 @@ class Caminho:
 
 
 
-        #print(self.vizitados)
+        print(self.vizitados)
 
 
     def add_beira(self, i, j):
@@ -182,11 +183,12 @@ class Caminho:
 
 
 
-t = 10 # tamanho do labirinto
+i = 5 # tamanho do labirinto
+j = 7
 
-
-lab = Labirinto(t)
+lab = Labirinto(i, j)
 cam = Caminho(lab)
+
 print('local do inicio:', lab.inicio)
 print('local do fim:', lab.fim)
 
@@ -196,7 +198,7 @@ lab.imprimir()
 #lab.imprimir_lab()
 print()
 
-quant_paredes_inicio = 2*t*(t-1)
+quant_paredes_inicio = i*(j-1) + j*(i-1)
 quant_paredes_final = quant_paredes_inicio - cam.cont
 
 print('Quantidade de paredes no labirinto =', quant_paredes_final)
