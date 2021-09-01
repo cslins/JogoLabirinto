@@ -1,13 +1,22 @@
 import random
 import math
 
-
+BRANCO = 0
+CINZA = 1
+PRETO = 2
 
 class Vertice:
 
-    def __init__(self, id, list_adj: list):
-        self.id = id
-        self.list_adj = list_adj
+    def __init__(self, i, j):
+        self.i = i
+        self.j = j
+        self.list_adj = []
+        
+        apple = False
+
+    def add_vizinho(self, v):
+        if v not in self.list_adj:
+            self.list_adj.append(v)
 
 
 
@@ -30,23 +39,16 @@ class Labirinto:
         for i in range(self.i):
             linha = []
             for j in range(self.j):
-                id = str(i) + ' ' + str(j)
-                vert = Vertice(id, [])
+                vert = Vertice(i, j)
                 linha.append(vert)
 
             self.matriz.append(linha)
 
 
-
     def imprimir(self):
-
-
-        inicial = self.matriz[self.inicio[0]][self.inicio[1]]
-        final = self.matriz[self.fim[0]][self.fim[1]]
-
         print(' ', end='')
         for j in range(self.j):
-            if self.matriz[0][j] == inicial:
+            if self.matriz[0][j] == self.inicio:
                 print('  ', end='')
             else:
                 print('_ ', end='')
@@ -63,7 +65,7 @@ class Labirinto:
                     else:
                         print('_', end='')
                 else:
-                    if self.matriz[i][j] == final:
+                    if self.matriz[i][j] == self.fim:
                         print(' ', end='')
                     else:
                         print('_', end='')
@@ -92,8 +94,8 @@ class Labirinto:
 
 
     def inicio_fim(self):
-        self.inicio = [0, random.randint(0, self.j - 1)]
-        self.fim = [self.i - 1, random.randint(0, self.j - 1)]
+        self.inicio = self.matriz[0][random.randint(0, self.j - 1)]
+        self.fim = self.matriz[self.i - 1][random.randint(0, self.j - 1)]
 
 
 
@@ -103,103 +105,88 @@ class Caminho:
 
         self.lab = lab
         self.vizitados = []
-        self.beira = []
+        self.pilha = []
         self.cont = 0
+        self.lista_caminhos = []
+        self.anterior = []
 
-    def construir_caminho(self):
+    def inicializar(self):
+        for i in range(self.lab.i):
+            linha_vizit = []
+            linha_ante = []
+            for j in range(self.lab.j):
+                linha_vizit.append(False)
+                linha_ante.append(None)
 
-        self.cont = 0
+            self.vizitados.append(linha_vizit)
+            self.anterior.append(linha_ante)
+        self.pilha = []
 
-        self.beira = [self.lab.inicio]
+
+    def construir_caminho(self, t=True):
+
+        self.inicializar()
+
+        self.pilha = [self.lab.inicio]
         tam = self.lab.i * self.lab.j
 
-        local_atual = random.choice(self.beira)
-        
+        while self.pilha != []:
 
-        while len(self.vizitados) < (tam) - 1:
+            local_atual = self.pilha[-1]
 
-            self.beira.remove(local_atual)
+            i = local_atual.i
+            j = local_atual.j
 
-            i = local_atual[0]
-            j = local_atual[1]
+            self.vizitados[i][j] = True
+
+            opcoes = []
 
             if i > 0:
-                self.add_beira(i - 1, j)
+                if not self.vizitados[i-1][j]:
+                    opcoes.append(self.lab.matriz[i-1][j])
 
             if i < self.lab.i - 1:
-                self.add_beira(i + 1, j)
+                if not self.vizitados[i+1][j]:
+                    opcoes.append(self.lab.matriz[i+1][j])
 
             if j > 0:
-                self.add_beira(i, j - 1)
+                if not self.vizitados[i][j-1]:
+                    opcoes.append(self.lab.matriz[i][j-1])
 
             if j < self.lab.j - 1:
-                self.add_beira(i, j + 1)
+                if not self.vizitados[i][j+1]:
+                    opcoes.append(self.lab.matriz[i][j+1])
 
-            local_prox = random.choice(self.beira)
+            if opcoes == []:
+                self.pilha.pop()
+            else:
+                self.pilha.append(random.choice(opcoes))
+                prox = self.pilha[-1]
+                if t:
+                    self.conectar(prox, local_atual)
+                self.anterior[prox.i][prox.j] = local_atual
 
-            self.vizitados.append(local_atual)
+        caminho = []
+        caminho.append(self.lab.fim)
+        anterior = self.anterior[self.lab.fim.i][self.lab.fim.j]
 
-            for local in reversed(self.vizitados):
-                boolean = self.conectar(local[0], local[1], local_prox[0], local_prox[1])
-                if boolean:
-                    break
-
-
-            local_atual = local_prox.copy()
-
-
-
-        print(self.vizitados)
-
-
-    def add_beira(self, i, j):
-
-        if [i, j] not in self.beira and [i, j] not in self.vizitados:
-            self.beira.append([i, j])
-
+        while anterior is not None:
+            if not t:
+                self.conectar(anterior, caminho[0])
+            caminho.insert(0, anterior)
+            anterior = self.anterior[anterior.i][anterior.j]
+        
+        return caminho
 
 
-    def conectar(self, i1, j1, i2, j2):
-
-        if abs(i1 - i2) > 1 or abs(j1 - j2) > 1:
-            return False
-        if i1 != i2 and j1 != j2:
-            return False
+    def conectar(self, v1:Vertice, v2:Vertice):
 
         self.cont += 1
 
-        v1 = self.lab.matriz[i1][j1]
-        v2 = self.lab.matriz[i2][j2]
-
         if v2 not in v1.list_adj:
-            v1.list_adj.append(v2)
+            v1.add_vizinho(v2)
 
         if v1 not in v2.list_adj:
-            v2.list_adj.append(v1)
+            v2.add_vizinho(v1)
 
-        return True
-
-
-
-
-
-i = 5 # tamanho do labirinto
-j = 7
-
-lab = Labirinto(i, j)
-cam = Caminho(lab)
-
-print('local do inicio:', lab.inicio)
-print('local do fim:', lab.fim)
-
-cam.construir_caminho()
-
-lab.imprimir()
-#lab.imprimir_lab()
-print()
-
-quant_paredes_inicio = i*(j-1) + j*(i-1)
-quant_paredes_final = quant_paredes_inicio - cam.cont
-
-print('Quantidade de paredes no labirinto =', quant_paredes_final)
 
