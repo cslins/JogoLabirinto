@@ -1,4 +1,4 @@
-from grafo_lab import Labirinto, Caminho
+from grafo_lab import *
 import random
 
 
@@ -28,4 +28,12 @@ for itn in listacam:
 lab.imprimir()
 #lab.imprimir_lab()
 print()
+
+busca = BFS(lab)
+
+mc = busca.largura()
+
+for v in mc:
+    print(v.i, v.j, end='  ')
+
 
