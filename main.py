@@ -8,6 +8,7 @@ l = 40
 la = Labirinto(a, l)
 
 c = Caminhos(la, 5)
-#c.semsaida()
+c.semsaida()
 
 la.imprimir()
+print()

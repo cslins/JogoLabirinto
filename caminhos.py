@@ -42,17 +42,18 @@ class Caminhos:
                 pilha.append(random.choice(opc))
         
         print()
-        desvio = False
+        desvio = -1
         for n in range(len(pilha) - 1):
             i = pilha[n].i
             j = pilha[n].j
 
-            print(i, j)
-            if pilha[n] not in pilha[n+1].list_adj:
-                desvio = True
-            elif desvio:
+            if desvio == -1:
+                if self.cam[i][j] == []:
+                    desvio = n
+
+            else:
                 if self.cam[i][j] != []:
-                    pilha = pilha[:n+1]
+                    pilha = pilha[desvio-1:n+1]
                     break
 
 
@@ -64,6 +65,9 @@ class Caminhos:
             self.cam[i][j].append(num)
 
         self.cam[pilha[-1].i][pilha[-1].j].append(num)
+
+        for it in pilha:
+            print(it.i, it.j)
 
 
 
@@ -91,10 +95,6 @@ class Caminhos:
 
 
         return opcoes
-
-
-    def andar(self):
-        pass
 
     def semsaida(self):
         for i in range(self.lab.i):
