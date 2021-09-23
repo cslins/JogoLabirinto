@@ -42,6 +42,7 @@ class Labirinto:
         self.matriz = []
         self.inicio = [0, 0]
         self.fim = [self.i - 1, self.j - 1]
+        self.listmacas = []
 
         self.construir_lab()
         self.inicio_fim()
