@@ -22,7 +22,7 @@ class Vertice:
 def colocar_macas(lab, n: int):
     aux = []
     while True:
-        posi = (randrange(lab.i), randrange(lab.j))
+        posi = (random.randrange(lab.i), random.randrange(lab.j))
         if posi not in aux:
             aux.append(posi)
         if len(aux) == n:
