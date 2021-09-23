@@ -16,6 +16,34 @@ class Vertice:
         if self not in v.list_adj:
             v.list_adj.append(self)
 
+    def acima(self) -> bool:
+        for v in self.list_adj:
+            if v.i == self.i - 1 and v.j == self.j:
+                return True
+        
+        return False
+
+
+    def abaixo(self) -> bool:
+        for v in self.list_adj:
+            if v.i == self.i + 1 and v.j == self.j:
+                return True
+        
+        return False
+
+    def esquerda(self) -> bool:
+        for v in self.list_adj:
+            if v.i == self.i and v.j == self.j - 1:
+                return True
+        
+        return False
+
+    def direita(self) -> bool:
+        for v in self.list_adj:
+            if v.i == self.i and v.j == self.j + 1:
+                return True
+        
+        return False
 
 
 class Labirinto:
