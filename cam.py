@@ -1,3 +1,4 @@
+from types import LambdaType
 from grafo_lab import *
 
 
@@ -28,47 +29,51 @@ class Cam:
 
         self.caminho(self.lab.inicio, 0, self.lab.i - 1, 0, self.lab.j - 1)
 
-        vert = random.choice(disponiveis)
-        while self.vizit[vert.i][vert.j]:
-            disponiveis.remove(vert)
-            if disponiveis != []:
-                vert = random.choice(disponiveis)
-            else:
-                return
-        print(vert.i, vert.j)
+        for num in range(1, self.n):
+            vert = random.choice(disponiveis)
+            while self.vizit[vert.i][vert.j]:
+                disponiveis.remove(vert)
+                if disponiveis != []:
+                    vert = random.choice(disponiveis)
+                else:
+                    return
+            print(vert.i, vert.j)
 
-        if vert.i == 0:
-            i2 = vert.i
-            if vert.j < self.lab.inicio.j:
-                j1 = vert.j + 1
-                j2 = self.lab.j - 1
+            if vert.i == 0:
+                i2 = vert.i
+                if vert.j < self.lab.inicio.j:
+                    j1 = vert.j + 1
+                    j2 = self.lab.j - 1
+                else:
+                    j1 = 0
+                    j2 = vert.j - 1
             else:
+                i2 = vert.i - 1
                 j1 = 0
-                j2 = vert.j - 1
-        else:
-            i2 = vert.i - 1
-            j1 = 0
-            j2 = self.lab.j - 1
-
-        
-        self.caminho(vert, 0, i2, j1, j2)
-
-        if vert.i == self.lab.i - 1:
-            i1 = vert.i
-            if vert.j < self.lab.fim.j:
-                j1 = vert.j + 1
                 j2 = self.lab.j - 1
+
+            
+            self.caminho(vert, 0, i2, j1, j2)
+
+            if vert.i == self.lab.i - 1:
+                i1 = vert.i
+                if vert.j < self.lab.fim.j:
+                    j1 = vert.j + 1
+                    j2 = self.lab.j - 1
+                else:
+                    j1 = 0
+                    j2 = vert.j - 1
             else:
+                i1 = vert.i + 1
                 j1 = 0
-                j2 = vert.j - 1
-        else:
-            i1 = vert.i + 1
-            j1 = 0
-            j2 = self.lab.j - 1
+                j2 = self.lab.j - 1
 
-        self.caminho(vert, i1, self.lab.i - 1, j1, j2)
+            self.caminho(vert, i1, self.lab.i - 1, j1, j2)
 
-        
+        for vrt in disponiveis:
+            if not self.vizit[vrt.i][vrt.j]:
+                self.caminho(vrt,0, self.lab.i - 1, 0, self.lab.j - 1)
+ 
 
     def caminho(self, origem: Vertice, i1, i2, j1, j2):
 
@@ -120,11 +125,3 @@ class Cam:
         for v in pilha:
             self.vizit[v.i][v.j] = True
             #print(v.i, v.j)
-
-        
-
-class Contar:
-
-    def __init__(self) -> None:
-        pass
-        

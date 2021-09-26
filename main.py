@@ -1,14 +1,25 @@
 from menorcaminho import BFS
-from caminhos import *
+
+from cam import *
 import pygame
 
 
-a = 30
-l = 40
+a = 3
+l = 3
 la = Labirinto(a, l)
 
-c = Caminhos(la, 5)
-c.semsaida()
+c = Cam(la, 1)
+c.define_caminho()
 
 la.imprimir()
 print()
+
+'''
+busca = BFS(la)
+
+mc = busca.largura()
+
+for v in mc:
+    print(v.i, v.j)
+
+'''
