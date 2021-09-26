@@ -1,6 +1,7 @@
 from menorcaminho import BFS
-
-from cam import *
+from caminhos import *
+from caminhoOtimo import *
+import imprimir
 import pygame
 
 
@@ -14,12 +15,14 @@ c.define_caminho()
 la.imprimir()
 print()
 
-'''
-busca = BFS(la)
 
-mc = busca.largura()
+ext = imprimir.Base(lab)
+ext.print()
+print()
 
-for v in mc:
-    print(v.i, v.j)
+otimo = BellmanFord(lab, 10)
 
-'''
+otimocaminho = otimo.search()
+ext.caminho_vertice(otimocaminho['caminho'])
+print(otimocaminho['valor'])
+print()
