@@ -1,5 +1,5 @@
 from menorcaminho import BFS
-from caminhos import *
+from cam import *
 from caminhoOtimo import *
 import imprimir
 import pygame
@@ -7,12 +7,14 @@ import pygame
 
 a = 3
 l = 3
-la = Labirinto(a, l)
+lab = Labirinto(a, l)
 
-c = Cam(la, 1)
+c = Cam(lab, 1)
 c.define_caminho()
 
-la.imprimir()
+lab.colocar_macas(4)
+
+lab.imprimir()
 print()
 
 

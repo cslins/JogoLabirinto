@@ -1,8 +1,9 @@
+from grafo_lab import *
 import sys
 
 class BellmanFord:
 
-    def __init__(self, lab, cost: int):
+    def __init__(self, lab: Labirinto, cost: int):
         self.lab = lab  # para acessar o labrito
         self.M = lab.i * lab.j * 2  # numero de interaçoes do algoritimo
         self.caminho = [[[] for _ in range(lab.j)] for _ in range(lab.i)]  # matriz que guarda o melhor caminho para cada vertice 

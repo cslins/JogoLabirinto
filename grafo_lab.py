@@ -17,20 +17,6 @@ class Vertice:
     
     def set_apple(self):
         self.apple = True
-            
-
-def colocar_macas(lab, n: int):
-    aux = []
-    while True:
-        posi = (random.randrange(lab.i), random.randrange(lab.j))
-        if posi not in aux:
-            aux.append(posi)
-        if len(aux) == n:
-            break
-
-    lab.listmacas.append(aux)
-    for i, j in aux:
-        lab.matriz[i][j].set_apple()
 
     def acima(self) -> bool:
         for v in self.list_adj:
@@ -60,7 +46,7 @@ def colocar_macas(lab, n: int):
                 return True
         
         return False
-
+        
 
 class Labirinto:
 
@@ -139,5 +125,19 @@ class Labirinto:
     def inicio_fim(self):
         self.inicio = self.matriz[0][random.randint(0, self.j - 1)]
         self.fim = self.matriz[self.i - 1][random.randint(0, self.j - 1)]
+
+
+    def colocar_macas(self, n: int):
+        aux = []
+        while True:
+            posi = (random.randrange(self.i), random.randrange(self.j))
+            if posi not in aux:
+                aux.append(posi)
+            if len(aux) == n:
+                break
+
+        self.listmacas.append(aux)
+        for i, j in aux:
+            self.matriz[i][j].set_apple()
 
 

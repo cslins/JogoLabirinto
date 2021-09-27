@@ -1,4 +1,4 @@
-from alt_grafo_lab import *
+from grafo_lab import *
 import copy
 
 preto = '\033[40m'
