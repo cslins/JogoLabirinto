@@ -12,7 +12,7 @@ class Vertice:
         self.inicio = False
         self.fim = False
 
-        apple = False
+        self.apple = False
 
     def add_vizinho(self, v):
         if v not in self.list_adj:
@@ -48,6 +48,9 @@ class Vertice:
                 return True
         
         return False
+    
+    def set_apple(self):
+        self.apple = True
 
 
 class Labirinto:
@@ -61,6 +64,8 @@ class Labirinto:
 
         self.construir_lab()
         self.inicio_fim()
+        
+        self.listmacas = []
 
 
 
@@ -140,4 +145,20 @@ class Labirinto:
                     j.inicio = True
                 if(self.fim == j):
                     j.fim = True
+                    
+
+    def colocar_macas(self, n: int):
+        aux = []
+        while True:
+            posi = (random.randrange(self.i), random.randrange(self.j))
+            if posi not in aux:
+                aux.append(posi)
+            if len(aux) == n:
+                break
+    
+        self.listmacas.append(aux)
+        for i, j in aux:
+            self.matriz[i][j].set_apple()
+            
+
         
