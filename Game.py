@@ -11,8 +11,8 @@ labi_width = window_width * 0.8
 labi_height = labi_width * (9/16)
 
 
-a = 30
-l = 30
+a = 10
+l = 10
 
 
 class Map:
@@ -123,10 +123,10 @@ def drawCounter(value):
 
 actual_i= matrix_map.Labirin.inicio.i
 actual_j  = matrix_map.Labirin.inicio.j
-playerX = ((labi_width * actual_j)/matrix_map.width) + (window_width - labi_width) * 0.55
-playerY = ((labi_height * actual_i) /matrix_map.height) + (window_height - labi_height) * 0.55
-playerWidth = ((labi_width)/matrix_map.width) * 0.4
-playerHeight = ((labi_height)/matrix_map.height) *0.4
+playerX = ((labi_width * actual_j)/matrix_map.width) + ((window_width - labi_width) * 0.5) + (labi_width/matrix_map.width * 0.4)
+playerY = ((labi_height * actual_i) /matrix_map.height) + (window_height - labi_height) * 0.5 + (labi_height/matrix_map.height * 0.4)
+playerWidth = ((labi_width)/matrix_map.width) * 0.5
+playerHeight = ((labi_height)/matrix_map.height) * 0.5
 stepsCounter = 0
 
 
