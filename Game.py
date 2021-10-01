@@ -17,12 +17,12 @@ l = 15
 
 class Map:
     
-    def __init__(self, height:int, width:int, n_paths:int):
+    def __init__(self, height:int, width:int, n_paths:int, n_apples:int, apples_score:int):
         
         self.Labirin = Labirinto(height, width)
         self.Path = Cam(self.Labirin, 1)
         self.Path.define_caminho()
-        self.appleScore = 10
+        self.appleScore = apples_score
         self.Otimo = BellmanFord(self.Labirin, self.appleScore)
         self.otimoCaminho = self.Otimo.search()
         self.height = height
@@ -31,7 +31,7 @@ class Map:
         
         self.graph_map = self.Labirin.matriz
         self.matrix_map = []
-        self.Labirin.colocar_macas(10)
+        self.Labirin.colocar_macas(n_apples)
         
         self.Labirin.imprimir()
 
@@ -182,6 +182,8 @@ class GUI:
         self.height = 'Altura'
         self.paths = 'Nº Caminhos'
         self.chooser = 'Mostrar Caminho'
+        self.appleQt = 'Nº Maçãs'
+        self.appleScore = 'Pontos Maçãs'
     
     
     def drawButtons(self):
@@ -189,26 +191,36 @@ class GUI:
         widthButton = self.font.render(self.width, True, (0,0,0), (173,255,47))
         heightButton = self.font.render(self.height, True, (0,0,0), (173,255,47))
         pathsButton = self.font.render(self.paths, True, (0,0,0), (173,255,47))
+        appleQtButton = self.font.render(self.appleQt, True, (0,0,0), (173,255,47))
+        appleScoreButton = self.font.render(self.appleScore, True, (0,0,0), (173,255,47))
         startButton = self.font.render("Iniciar Jogo", True, (0,0,0), (173,255,47))
         
         widthButtonRect = widthButton.get_rect()
         heightButtonRect = heightButton.get_rect()
         pathsButtonRect = pathsButton.get_rect()
+        appleQtButtonRect = appleQtButton.get_rect()
+        appleScoreButtonRect = appleScoreButton.get_rect()
         startButtonRect = startButton.get_rect()
         
-        widthButtonRect.center = (window_width*0.3, window_height*0.3)
-        heightButtonRect.center = (window_width*0.7, window_height*0.3)
-        pathsButtonRect.center = (window_width*0.5, window_height*0.5)
-        startButtonRect.center = (window_width*0.5, window_height*0.7)
+        widthButtonRect.center = (window_width*0.3, window_height*0.2)
+        heightButtonRect.center = (window_width*0.7, window_height*0.2)
+        pathsButtonRect.center = (window_width*0.5, window_height*0.4)
+        appleQtButtonRect = (window_width*0.25, window_height*0.58)
+        appleScoreButtonRect = (window_width*0.62, window_height*0.58)
+        startButtonRect.center = (window_width*0.5, window_height*0.8)
         
-        pygame.draw.rect(window,(173,255,47), pygame.Rect((window_width*0.2, window_height*0.25), (window_width*0.2, window_height*0.1)))
-        pygame.draw.rect(window,(173,255,47), pygame.Rect((window_width*0.6, window_height*0.25), (window_width*0.2, window_height*0.1)))
-        pygame.draw.rect(window,(173,255,47), pygame.Rect((window_width*0.4, window_height*0.45), (window_width*0.2, window_height*0.1)))
-        pygame.draw.rect(window,(173,255,47), pygame.Rect((window_width*0.4, window_height*0.65), (window_width*0.2, window_height*0.1)))
+        pygame.draw.rect(window,(173,255,47), pygame.Rect((window_width*0.2, window_height*0.15), (window_width*0.2, window_height*0.1)))
+        pygame.draw.rect(window,(173,255,47), pygame.Rect((window_width*0.6, window_height*0.15), (window_width*0.2, window_height*0.1)))
+        pygame.draw.rect(window,(173,255,47), pygame.Rect((window_width*0.4, window_height*0.35), (window_width*0.2, window_height*0.1)))
+        pygame.draw.rect(window,(173,255,47), pygame.Rect((window_width*0.2, window_height*0.55), (window_width*0.2, window_height*0.1)))
+        pygame.draw.rect(window,(173,255,47), pygame.Rect((window_width*0.6, window_height*0.55), (window_width*0.2, window_height*0.1)))
+        pygame.draw.rect(window,(173,255,47), pygame.Rect((window_width*0.4, window_height*0.75), (window_width*0.2, window_height*0.1)))
         
         window.blit(widthButton, widthButtonRect)
         window.blit(heightButton, heightButtonRect)
         window.blit(pathsButton, pathsButtonRect)
+        window.blit(appleQtButton, appleQtButtonRect)
+        window.blit(appleScoreButton, appleScoreButtonRect)
         window.blit(startButton, startButtonRect)
         
     
@@ -231,7 +243,7 @@ class GUI:
         textRect = text.get_rect()
         textRect.center = (window_width*0.2, window_height*0.95)
         
-        pygame.draw.rect(window,(80, 80, 80), pygame.Rect((window_width*0.1, window_height*0.90), (window_width*0.2, window_height*0.1)))
+        pygame.draw.rect(window,(80, 80, 80), pygame.Rect((window_width*0.1, window_height*0.925), (window_width*0.2, window_height*0.05)))
         
         window.blit(text, textRect)
         
@@ -262,6 +274,10 @@ while runningGame:
             gui.height = value_text
         if(actual_button == 'paths'):
             gui.paths = value_text
+        if(actual_button == 'appleQt'):
+            gui.appleQt = value_text
+        if(actual_button == 'appleScore'):
+            gui.appleScore = value_text
             
         
         for event in pygame.event.get():    
@@ -274,18 +290,18 @@ while runningGame:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if window_width*0.4 <= mouse[0] <= window_width*0.6:
                     
-                    if window_height*0.45 <= mouse[1] <= window_height*0.55:
+                    if window_height*0.35 <= mouse[1] <= window_height*0.45:
                         actual_button = 'paths'
                         value_text = ''
                     
-                    if window_height*0.65 <= mouse[1] <= window_height*0.75:
+                    if window_height*0.75 <= mouse[1] <= window_height*0.85:
                         runningMenu = False
-                        matrix_map = Map(int(gui.height), int(gui.width), int(gui.paths))
+                        matrix_map = Map(int(gui.height), int(gui.width), int(gui.paths), int(gui.appleQt), int(gui.appleScore))
                         player = Player()
                         break
                     
                 
-                if window_height*0.25 <= mouse[1] <= window_height*0.35:
+                if window_height*0.15 <= mouse[1] <= window_height*0.25:
                 
                     if window_width*0.2 <= mouse[0] <= window_width*0.4:
                         actual_button = 'width'
@@ -293,6 +309,16 @@ while runningGame:
                     
                     if window_width*0.6 <= mouse[0] <= window_width*0.8:
                         actual_button = 'height'
+                        value_text = ''
+
+                if window_height*0.55 <= mouse[1] <= window_height*0.65:
+                
+                    if window_width*0.2 <= mouse[0] <= window_width*0.4:
+                        actual_button = 'appleQt'
+                        value_text = ''
+                    
+                    if window_width*0.6 <= mouse[0] <= window_width*0.8:
+                        actual_button = 'appleScore'
                         value_text = ''
                 
         
@@ -321,11 +347,13 @@ while runningGame:
         elif event.type == pygame.KEYDOWN:
             try:
                 player.movePlayer()
-            except:
+            except IndexError:
                 runningMenu = True
                 gui.width = 'Largura'
                 gui.height = 'Altura'
                 gui.paths = 'Nº Caminhos'
+                gui.appleQt = 'Nº Maçãs'
+                gui.appleScore = 'Pontos Maçãs'
                 actual_button = ''
                 value_text = ''
             if event.key == pygame.K_ESCAPE:
