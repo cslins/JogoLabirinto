@@ -119,13 +119,14 @@ class Map:
                 
 
 
-matrix_map = Map(a, l, 1)
+
 
 
 pygame.init()
 window = pygame.display.set_mode((window_width,window_height))
 clock = pygame.time.Clock()
-running = True
+runningGame = True
+runningMenu = True
 
 
 class Player:
@@ -177,6 +178,39 @@ class Player:
 class GUI:
     def __init__(self):
         self.font = pygame.font.Font('freesansbold.ttf', 32)
+        self.width  = 'Largura'
+        self.height = 'Altura'
+        self.paths = 'Nº Caminhos'
+        self.chooser = 'Mostrar Caminho'
+    
+    
+    def drawButtons(self):
+        
+        widthButton = self.font.render(self.width, True, (0,0,0), (173,255,47))
+        heightButton = self.font.render(self.height, True, (0,0,0), (173,255,47))
+        pathsButton = self.font.render(self.paths, True, (0,0,0), (173,255,47))
+        startButton = self.font.render("Iniciar Jogo", True, (0,0,0), (173,255,47))
+        
+        widthButtonRect = widthButton.get_rect()
+        heightButtonRect = heightButton.get_rect()
+        pathsButtonRect = pathsButton.get_rect()
+        startButtonRect = startButton.get_rect()
+        
+        widthButtonRect.center = (window_width*0.3, window_height*0.3)
+        heightButtonRect.center = (window_width*0.7, window_height*0.3)
+        pathsButtonRect.center = (window_width*0.5, window_height*0.5)
+        startButtonRect.center = (window_width*0.5, window_height*0.7)
+        
+        pygame.draw.rect(window,(173,255,47), pygame.Rect((window_width*0.2, window_height*0.25), (window_width*0.2, window_height*0.1)))
+        pygame.draw.rect(window,(173,255,47), pygame.Rect((window_width*0.6, window_height*0.25), (window_width*0.2, window_height*0.1)))
+        pygame.draw.rect(window,(173,255,47), pygame.Rect((window_width*0.4, window_height*0.45), (window_width*0.2, window_height*0.1)))
+        pygame.draw.rect(window,(173,255,47), pygame.Rect((window_width*0.4, window_height*0.65), (window_width*0.2, window_height*0.1)))
+        
+        window.blit(widthButton, widthButtonRect)
+        window.blit(heightButton, heightButtonRect)
+        window.blit(pathsButton, pathsButtonRect)
+        window.blit(startButton, startButtonRect)
+        
     
 
     def drawCounter(self):
@@ -187,35 +221,137 @@ class GUI:
         textRect = text.get_rect()
         textRect.center = (window_width*0.95, window_height*0.1)
         window.blit(text, textRect)
-
-
+        
+    
+    def drawPathChooser(self):
+        
+        font = pygame.font.Font('freesansbold.ttf', 20)
+        
+        text = font.render(gui.chooser, True, (0,0,0), (80, 80, 80))
+        textRect = text.get_rect()
+        textRect.center = (window_width*0.2, window_height*0.95)
+        
+        pygame.draw.rect(window,(80, 80, 80), pygame.Rect((window_width*0.1, window_height*0.90), (window_width*0.2, window_height*0.1)))
+        
+        window.blit(text, textRect)
+        
+        
     
 
 
-
-
-player = Player()
 gui = GUI()
+actual_button = ''
+value_text = ''
+
+while runningGame:
+    
+    
+    window.fill((255,255,255))
+    
+    mouse = pygame.mouse.get_pos()
+    
+    while runningMenu:
+        
+        window.fill((255,255,255))
+        
+        mouse = pygame.mouse.get_pos()
+        
+        if(actual_button == 'width'):
+            gui.width = value_text
+        if(actual_button == 'height'):
+            gui.height = value_text
+        if(actual_button == 'paths'):
+            gui.paths = value_text
+            
+        
+        for event in pygame.event.get():    
+            
+            if event.type == pygame.QUIT:
+                runningMenu = False
+                runningGame = False
+                break
+            
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if window_width*0.4 <= mouse[0] <= window_width*0.6:
+                    
+                    if window_height*0.45 <= mouse[1] <= window_height*0.55:
+                        actual_button = 'paths'
+                        value_text = ''
+                    
+                    if window_height*0.65 <= mouse[1] <= window_height*0.75:
+                        runningMenu = False
+                        matrix_map = Map(int(gui.height), int(gui.width), int(gui.paths))
+                        player = Player()
+                        break
+                    
+                
+                if window_height*0.25 <= mouse[1] <= window_height*0.35:
+                
+                    if window_width*0.2 <= mouse[0] <= window_width*0.4:
+                        actual_button = 'width'
+                        value_text = ''
+                    
+                    if window_width*0.6 <= mouse[0] <= window_width*0.8:
+                        actual_button = 'height'
+                        value_text = ''
+                
+        
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_BACKSPACE:
+                    value_text = value_text[0:-1]
+                else:    
+                    value_text += event.unicode
+                print(actual_button)
+                print(value_text)
+                print(gui.width)
+                    
+            
+            gui.drawButtons()
+
+            pygame.display.update()    
+
+            clock.tick(60)
 
 
-while running:
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
+            runningGame = False
             break
         elif event.type == pygame.KEYDOWN:
-            player.movePlayer()
+            try:
+                player.movePlayer()
+            except:
+                runningMenu = True
+                gui.width = 'Largura'
+                gui.height = 'Altura'
+                gui.paths = 'Nº Caminhos'
+                actual_button = ''
+                value_text = ''
             if event.key == pygame.K_ESCAPE:
-                running = False
+                runningGame = False
                 break
+        
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            
+            if window_width*0.1 <= mouse[0] <= window_width*0.3 and window_height*0.9 <= mouse[1] <= window_height\
+                and gui.chooser == 'Esconder Caminho':
+                gui.chooser = 'Mostrar Caminho'
+                
+                
+            elif window_width*0.1 <= mouse[0] <= window_width*0.3 and window_height*0.9 <= mouse[1] <= window_height\
+                and gui.chooser == 'Mostrar Caminho':
+                gui.chooser = 'Esconder Caminho'
 
-
-
-    window.fill((255,255,255))
     
     
-    matrix_map.drawPath()
+    if(gui.chooser == 'Esconder Caminho'):
+        matrix_map.drawPath()
+            
+
+    
+    
+    gui.drawPathChooser()
             
     gui.drawCounter()
     
@@ -226,6 +362,10 @@ while running:
     pygame.display.update()    
 
     clock.tick(60)
+                        
+    
+
+
 
 
 pygame.quit()
