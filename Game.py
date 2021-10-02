@@ -23,8 +23,10 @@ class Map:
         self.Path = Cam(self.Labirin, 1)
         self.Path.define_caminho()
         self.appleScore = apples_score
-        self.Otimo = BellmanFord(self.Labirin, self.appleScore)
-        self.otimoCaminho = self.Otimo.search()
+        self.Otimo = BFS(self.Labirin)
+        self.otimoCaminhoSemMaca = self.Otimo.largura()
+        self.OtimoMaca = BellmanFord(self.Labirin, self.appleScore)
+        self.otimoCaminhoMaca = self.OtimoMaca.search()
         self.height = height
         self.width = width
         
@@ -94,9 +96,9 @@ class Map:
                         pygame.draw.line(window,(0,0,255),(initialPosX, initialPosY), (initialPosX, newPosY), borderPixelsX)
                         
 
-    def drawPath(self):
+    def drawPathApple(self):
         
-        for node in (self.otimoCaminho['caminho']):
+        for node in (self.otimoCaminhoMaca['caminho']):
         
             pos_x = (labi_width * node.j )/self.width + 0.10*window_width
             pos_y = (labi_height * node.i)/self.height + 0.10*window_height
@@ -104,6 +106,18 @@ class Map:
             height = width*9/16
             
             pygame.draw.rect(window,(211,211,211), pygame.Rect((pos_x, pos_y), (width, height)))
+            
+    
+    def drawPathNoApple(self):
+        
+        for node in (self.otimoCaminhoSemMaca):
+        
+            pos_x = (labi_width * node.j )/self.width + 0.10*window_width
+            pos_y = (labi_height * node.i)/self.height + 0.10*window_height
+            width = (labi_width/matrix_map.width)
+            height = width*9/16
+            
+            pygame.draw.rect(window,(153, 153, 153), pygame.Rect((pos_x, pos_y), (width, height)))
         
 
     def __drawApple(self, actual_i, actual_j):
@@ -139,7 +153,7 @@ class Player:
         self.playerWidth = ((labi_width)/matrix_map.width) * 0.5
         self.playerHeight = ((labi_height)/matrix_map.height) * 0.5
         self.stepsCounter = 0
-
+        self.score = 100
 
 
     def movePlayer(self):
@@ -161,9 +175,12 @@ class Player:
             self.playerY -= (labi_height/matrix_map.height)
             self.actual_i -= 1
             self.stepsCounter += 1
-        
-        
+    
+           
         self.checkApple()
+        self.checkScore()
+        
+        
         print(self.playerX, self.playerY)
         
     def drawPlayer(self):
@@ -173,6 +190,11 @@ class Player:
         if matrix_map.graph_map[self.actual_i][self.actual_j].apple:
             matrix_map.graph_map[self.actual_i][self.actual_j].apple = False
             self.stepsCounter -= matrix_map.appleScore
+            
+    def checkScore(self):
+        if(self.stepsCounter > len(matrix_map.otimoCaminhoSemMaca)):
+           self.score = int ( ( len(matrix_map.otimoCaminhoSemMaca)/self.stepsCounter ) * 100 )
+            
         
 
 class GUI:
@@ -181,9 +203,11 @@ class GUI:
         self.width  = 'Largura'
         self.height = 'Altura'
         self.paths = 'Nº Caminhos'
-        self.chooser = 'Mostrar Caminho'
+        self.chooserApple = 'Mostrar Caminho (Com Maçãs)'
+        self.chooserNoApple = 'Mostrar Caminho (Sem Maçãs)'
         self.appleQt = 'Nº Maçãs'
         self.appleScore = 'Pontos Maçãs'
+
     
     
     def drawButtons(self):
@@ -229,21 +253,57 @@ class GUI:
         
         value = player.stepsCounter
         
-        text = self.font.render(str(value), True, (0,0,0), (255, 255, 255))
+        font = pygame.font.Font('freesansbold.ttf', 20)
+        
+        
+        text = font.render('Passos:', True, (0,0,0), (255, 255, 255))
         textRect = text.get_rect()
         textRect.center = (window_width*0.95, window_height*0.1)
         window.blit(text, textRect)
         
-    
-    def drawPathChooser(self):
+        text = self.font.render(str(value), True, (0,0,0), (255, 255, 255))
+        textRect = text.get_rect()
+        textRect.center = (window_width*0.95, window_height*0.2)
+        window.blit(text, textRect)
+        
+    def drawScore(self):
+        value = player.score
         
         font = pygame.font.Font('freesansbold.ttf', 20)
         
-        text = font.render(gui.chooser, True, (0,0,0), (80, 80, 80))
+        text = font.render('Pontuação:', True, (0,0,0), (255, 255, 255))
         textRect = text.get_rect()
-        textRect.center = (window_width*0.2, window_height*0.95)
+        textRect.center = (window_width*0.95, window_height*0.4)
+        window.blit(text, textRect)
         
-        pygame.draw.rect(window,(80, 80, 80), pygame.Rect((window_width*0.1, window_height*0.925), (window_width*0.2, window_height*0.05)))
+        text = self.font.render(str(value)+'%', True, (0,0,0), (255, 255, 255))
+        textRect = text.get_rect()
+        textRect.center = (window_width*0.95, window_height*0.5)
+        window.blit(text, textRect)
+        
+    
+    def drawPathAppleChooser(self):
+        
+        font = pygame.font.Font('freesansbold.ttf', 20)
+        
+        text = font.render(gui.chooserApple, True, (0,0,0), (80, 80, 80))
+        textRect = text.get_rect()
+        textRect.center = (window_width*0.25, window_height*0.95)
+        
+        pygame.draw.rect(window,(80, 80, 80), pygame.Rect((window_width*0.1, window_height*0.925), (window_width*0.3, window_height*0.05)))
+        
+        window.blit(text, textRect)
+        
+
+    def drawPathNoAppleChooser(self):
+        
+        font = pygame.font.Font('freesansbold.ttf', 20)
+        
+        text = font.render(gui.chooserNoApple, True, (0,0,0), (96, 96, 96))
+        textRect = text.get_rect()
+        textRect.center = (window_width*0.65, window_height*0.95)
+        
+        pygame.draw.rect(window,(96, 96, 96), pygame.Rect((window_width*0.5, window_height*0.925), (window_width*0.3, window_height*0.05)))
         
         window.blit(text, textRect)
         
@@ -362,26 +422,43 @@ while runningGame:
         
         if event.type == pygame.MOUSEBUTTONDOWN:
             
-            if window_width*0.1 <= mouse[0] <= window_width*0.3 and window_height*0.9 <= mouse[1] <= window_height\
-                and gui.chooser == 'Esconder Caminho':
-                gui.chooser = 'Mostrar Caminho'
+            if window_width*0.1 <= mouse[0] <= window_width*0.4 and window_height*0.925 <= mouse[1] <= window_height*0.975\
+                and gui.chooserApple == 'Esconder Caminho (Com Maçãs)':
+                gui.chooserApple = 'Mostrar Caminho (Com Maçãs)'
                 
                 
-            elif window_width*0.1 <= mouse[0] <= window_width*0.3 and window_height*0.9 <= mouse[1] <= window_height\
-                and gui.chooser == 'Mostrar Caminho':
-                gui.chooser = 'Esconder Caminho'
+            elif window_width*0.1 <= mouse[0] <= window_width*0.4 and window_height*0.925 <= mouse[1] <= window_height*0.975\
+                and gui.chooserApple == 'Mostrar Caminho (Com Maçãs)':
+                gui.chooserApple = 'Esconder Caminho (Com Maçãs)'
+                
+        
+            if window_width*0.5 <= mouse[0] <= window_width*0.8 and window_height*0.925 <= mouse[1] <= window_height*0.975\
+                and gui.chooserNoApple == 'Esconder Caminho (Sem Maçãs)':
+                gui.chooserNoApple = 'Mostrar Caminho (Sem Maçãs)'
+                
+                
+            elif window_width*0.5 <= mouse[0] <= window_width*0.8 and window_height*0.925 <= mouse[1] <= window_height*0.975\
+                and gui.chooserNoApple == 'Mostrar Caminho (Sem Maçãs)':
+                gui.chooserNoApple = 'Esconder Caminho (Sem Maçãs)'
 
     
     
-    if(gui.chooser == 'Esconder Caminho'):
-        matrix_map.drawPath()
+    if(gui.chooserApple == 'Esconder Caminho (Com Maçãs)'):
+        matrix_map.drawPathApple()
+
+    if(gui.chooserNoApple == 'Esconder Caminho (Sem Maçãs)'):
+        matrix_map.drawPathNoApple()
             
 
     
     
-    gui.drawPathChooser()
+    gui.drawPathAppleChooser()
+    
+    gui.drawPathNoAppleChooser()
             
     gui.drawCounter()
+    
+    gui.drawScore()
     
     matrix_map.drawMap()
     
