@@ -28,3 +28,11 @@ otimocaminho = otimo.search()
 ext.caminho_vertice(otimocaminho['caminho'])
 print(otimocaminho['valor'])
 print()
+
+alt_otimo = BFS_mod(lab, 10)
+otimo_caminho = alt_otimo.search()
+ext.caminho_vertice(otimo_caminho['caminho'])
+print(otimo_caminho['valor'])
+#for i in otimo_caminho['caminho']:
+#    print(i.i, i.j)
+print()
