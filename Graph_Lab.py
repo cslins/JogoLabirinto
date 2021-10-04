@@ -3,10 +3,10 @@ import sys
 
 class Vertice:
 
-    def __init__(self, i, j, ID):
+    def __init__(self, i, j):
         self.i = i
         self.j = j
-        self.id = ID
+
         self.list_adj = []
         
         self.inicio = False
@@ -71,68 +71,15 @@ class Labirinto:
 
     def construir_lab(self):
         
-        ID = ""
-
         for i in range(self.i):
             linha = []
-            ID = str(i)
             for j in range(self.j):
                 
-                ID += " "+str(j)
-                vert = Vertice(i, j, ID)
+                vert = Vertice(i, j)
                 linha.append(vert)
-
-                ID = str(i)
 
             self.matriz.append(linha)
 
-
-    def imprimir(self):
-        print(' ', end='')
-        for j in range(self.j):
-            if self.matriz[0][j] == self.inicio:
-                print('  ', end='')
-            else:
-                print('_ ', end='')
-
-        for i in range(self.i):
-            print()
-            for j in range(self.j):
-                if j == 0:
-                    print('|', end='')
-
-                if i < self.i - 1:
-                    if self.matriz[i + 1][j] in self.matriz[i][j].list_adj:
-                        print(' ', end='')
-                    else:
-                        print('_', end='')
-                else:
-                    if self.matriz[i][j] == self.fim:
-                        print(' ', end='')
-                    else:
-                        print('_', end='')
-
-                if j < self.j - 1:
-                    if self.matriz[i][j + 1] in self.matriz[i][j].list_adj:
-                        print(' ', end='')
-                    else:
-                        print('|', end='')
-                else:
-                    print('|', end='')
-
-        print()
-
-    def imprimir_lab(self):
-
-        for i in range(self.i):
-            print()
-            for j in range(self.j):
-
-                aux = []
-                for n in self.matriz[i][j].list_adj:
-                    aux.append(n.id)
-
-                print(f'{str(self.matriz[i][j].id): <6}:{str(aux)}')
 
 
     def inicio_fim(self):
