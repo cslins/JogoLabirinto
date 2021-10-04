@@ -42,18 +42,6 @@ class Map:
             for j in range(width):
                 self.matrix_map[i].append(0)
         
-        
-    
-    def print_matrix_map(self) -> None:
-        for i in range(self.height):
-            print(self.matrix_map[i])
-            
-    
-    def print_graph_map(self) -> None:
-        for i in range(self.height):
-            print()
-            for j in range(self.width):
-                print(self.graph_map[i][j].id, end='   ')
                 
 
     def drawMap(self):
