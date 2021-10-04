@@ -25,6 +25,7 @@ class Map:
         self.appleScore = apples_score
         self.Otimo = BFS(self.Labirin)
         self.otimoCaminhoSemMaca = self.Otimo.largura()
+        self.Labirin.colocar_macas(n_apples)
         self.OtimoMaca = BFS_mod(self.Labirin, self.appleScore)
         self.otimoCaminhoMaca = self.OtimoMaca.search()
         self.height = height
@@ -33,9 +34,6 @@ class Map:
         
         self.graph_map = self.Labirin.matriz
         self.matrix_map = []
-        self.Labirin.colocar_macas(n_apples)
-        
-        self.Labirin.imprimir()
 
         
         for i in range(height):
