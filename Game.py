@@ -30,6 +30,7 @@ class Map:
         self.otimoCaminhoMaca = self.OtimoMaca.search()
         self.height = height
         self.width = width
+        self.totalApples = self.__checkTotalApples()
         
         
         self.graph_map = self.Labirin.matriz
@@ -40,7 +41,19 @@ class Map:
             self.matrix_map.append([])
             for j in range(width):
                 self.matrix_map[i].append(0)
+        
+        
+    
+    def print_matrix_map(self) -> None:
+        for i in range(self.height):
+            print(self.matrix_map[i])
             
+    
+    def print_graph_map(self) -> None:
+        for i in range(self.height):
+            print()
+            for j in range(self.width):
+                print(self.graph_map[i][j].id, end='   ')
                 
 
     def drawMap(self):
@@ -89,7 +102,7 @@ class Map:
             pos_x = (labi_width * node.j )/self.width + 0.10*window_width
             pos_y = (labi_height * node.i)/self.height + 0.10*window_height
             width = (labi_width/matrix_map.width)
-            height = width*9/16
+            height = (labi_height/matrix_map.height)
             
             pygame.draw.rect(window,(211,211,211), pygame.Rect((pos_x, pos_y), (width, height)))
             
@@ -101,7 +114,7 @@ class Map:
             pos_x = (labi_width * node.j )/self.width + 0.10*window_width
             pos_y = (labi_height * node.i)/self.height + 0.10*window_height
             width = (labi_width/matrix_map.width)
-            height = width*9/16
+            height = (labi_height/matrix_map.height)
             
             pygame.draw.rect(window,(153, 153, 153), pygame.Rect((pos_x, pos_y), (width, height)))
         
@@ -116,6 +129,16 @@ class Map:
         height = width*9/16
     
         pygame.draw.rect(window,(220,20,60), pygame.Rect((pos_x, pos_y), (width, height)))
+        
+    
+    
+    def __checkTotalApples(self):
+        counter = 0 
+        for i in self.otimoCaminhoMaca['caminho']:
+            if i.apple:
+                counter += 1
+        
+        return counter
                 
 
 
@@ -140,6 +163,7 @@ class Player:
         self.playerHeight = ((labi_height)/matrix_map.height) * 0.5
         self.stepsCounter = 0
         self.score = 100
+        self.maxScore = matrix_map.otimoCaminhoMaca['valor'] - (matrix_map.totalApples * matrix_map.appleScore)
 
 
     def movePlayer(self):
@@ -162,7 +186,8 @@ class Player:
             self.actual_i -= 1
             self.stepsCounter += 1
     
-           
+          
+        print(self.maxScore, matrix_map.otimoCaminhoMaca['valor'])
         self.checkApple()
         self.checkScore()
         
@@ -178,9 +203,11 @@ class Player:
             self.stepsCounter -= matrix_map.appleScore
             
     def checkScore(self):
-        if(self.stepsCounter > len(matrix_map.otimoCaminhoSemMaca)):
-           self.score = int ( ( len(matrix_map.otimoCaminhoSemMaca)/self.stepsCounter ) * 100 )
+        
+        if(self.stepsCounter > matrix_map.otimoCaminhoMaca['valor']):
+            self.score = int ( ( (self.maxScore**2)/(self.stepsCounter**2) ) * 100 )
             
+
         
 
 class GUI:
@@ -460,5 +487,3 @@ while runningGame:
 
 
 pygame.quit()
-
-
