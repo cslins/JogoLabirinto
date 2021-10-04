@@ -1,5 +1,6 @@
 from Graph_Lab import *
 import sys
+from collections import deque
 
 class BellmanFord:
 
@@ -51,7 +52,63 @@ class BellmanFord:
     
     
 
+class BFS_mod:
 
+    def __init__(self, lab: Labirinto, cost: int):
+        self.lab = lab  # para acessar o labrito
+        self.caminho = [[[] for _ in range(lab.j)] for _ in
+                        range(lab.i)]  # matriz que guarda o melhor caminho para cada vertice
+        self.distance = [[sys.maxsize for _ in range(self.lab.j)] for _ in range(self.lab.i)]
+        self.cost = cost  # valor da maça
+        self.resposta = {'valor': sys.maxsize, 'caminho': []}
+
+        #self.search()
+
+    def search(self):
+
+        fila = deque()
+        self.distance[self.lab.inicio.i][self.lab.inicio.j] = 0
+        self.caminho[self.lab.inicio.i][self.lab.inicio.j] += [self.lab.inicio]
+
+        fila.append(self.lab.inicio)
+        while fila:
+            vertice = fila.popleft()
+            for vertice_adj in vertice.list_adj:
+
+                # define o custo
+                if vertice_adj.apple and vertice_adj not in self.caminho[vertice.i][vertice.j]:
+                    custo = -self.cost
+                else:
+                    custo = 1
+
+                # para cada vertice atualiza o custo e caminho, se for melhor
+                if self.distance[vertice.i][vertice.j] + custo <=\
+                        self.distance[vertice_adj.i][vertice_adj.j]:  # and vertice != self.lab.inicio:
+
+                    self.distance[vertice_adj.i][vertice_adj.j] = self.distance[vertice.i][vertice.j] + custo
+                    self.caminho[vertice_adj.i][vertice_adj.j] = self.caminho[vertice.i][vertice.j] + \
+                                                                 [vertice_adj]
+
+                    # salva o caminho se for o final
+                    if vertice_adj == self.lab.fim and \
+                            self.distance[vertice_adj.i][vertice_adj.j] < self.resposta['valor']:
+                        self.resposta['valor'] = self.distance[vertice.i][vertice.j]
+                        self.resposta['caminho'] = self.caminho[vertice.i][vertice.j] + [vertice_adj]
+
+                    fila.append(vertice_adj)
+
+                    #print()
+                    #e.caminho_vertice(self.caminho[vertice_adj.i][vertice_adj.j])
+                    #print('  -', vertice_adj.i, ',', vertice_adj.j, '-: ', self.distance[vertice_adj.i][vertice_adj.j])
+                    #for a in self.caminho[vertice_adj.i][vertice_adj.j]:
+                    #    print(a.i, a.j, end='  ')
+                    #print('\n')
+
+        return self.resposta
+    
+    
+    
+    
 
 BRANCO = 0
 CINZA = 1

@@ -25,7 +25,7 @@ class Map:
         self.appleScore = apples_score
         self.Otimo = BFS(self.Labirin)
         self.otimoCaminhoSemMaca = self.Otimo.largura()
-        self.OtimoMaca = BellmanFord(self.Labirin, self.appleScore)
+        self.OtimoMaca = BFS_mod(self.Labirin, self.appleScore)
         self.otimoCaminhoMaca = self.OtimoMaca.search()
         self.height = height
         self.width = width
