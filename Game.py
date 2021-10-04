@@ -20,7 +20,7 @@ class Map:
     def __init__(self, height:int, width:int, n_paths:int, n_apples:int, apples_score:int):
         
         self.Labirin = Labirinto(height, width)
-        self.Path = Cam(self.Labirin, 1)
+        self.Path = Cam(self.Labirin, n_paths)
         self.Path.define_caminho()
         self.appleScore = apples_score
         self.Otimo = BFS(self.Labirin)
