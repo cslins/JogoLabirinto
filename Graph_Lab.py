@@ -59,8 +59,8 @@ class Labirinto:
         self.i = i
         self.j = j
         self.matriz = []
-        self.inicio = [0, 0]
-        self.fim = [self.i - 1, self.j - 1]
+        self.inicio = 0
+        self.fim = 0
 
         self.construir_lab()
         self.inicio_fim()
@@ -73,8 +73,7 @@ class Labirinto:
         
         for i in range(self.i):
             linha = []
-            for j in range(self.j):
-                
+            for j in range(self.j):   
                 vert = Vertice(i, j)
                 linha.append(vert)
 
